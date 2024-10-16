@@ -3,7 +3,53 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/************** FREQUENCE *********************/
+#include "mbed.h"
 
+
+Ticker flipper;
+DigitalOut myled(LED1);
+InterruptIn mypin(BUTTON1);
+
+// Variable globale pour stocker la fréquence (initialisée à 5)
+int freq = 5; 
+
+
+void flip()
+{
+    myled = !myled;  // Inversion de l'état de la LED 
+}
+
+// Fonction appelée lorsqu'il y a un appui sur le bouton 
+void frequence()
+{
+    // Décrémente la temps à chaque appui sur le bouton
+    freq = freq - 1;
+
+    // Modifie la temps de la fonction flip en réattachant le ticker avec la nouvelle fréquence
+    flipper.attach(&flip, freq); 
+}
+
+int main()
+{
+    // Première attache la fonction flip pour être appelée périodiquement avec une fréquence initiale
+    flipper.attach(&flip, freq);  
+
+    // Interrutpion sur appuie du bouton pour décrementer la fréquence
+    mypin.rise(&frequence);
+
+
+    while (1) {
+        // Affichage la variable fréquence sur la console
+        printf("freq: %d \n\r", freq);
+        ThisThread::sleep_for(250);
+    }
+}
+/*******************************************/
+
+
+/************** Ticker *********************/
+/*
 #include "mbed.h"
 
 Ticker flipper;
@@ -19,8 +65,11 @@ int main()
 {
     flipper.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)    
 }
+*/
+/*******************************************/
 
 
+/************** Timer *********************/
 /*
 #include "mbed.h"
 InterruptIn mypin(BUTTON1); 
@@ -30,37 +79,34 @@ using namespace std::chrono;
 
 Timer t;
 
-
 void timer_on()
 {
-    t.start();
-    myled = mypin;
-    
+    t.start();             // Démarre le chronomètre quand le bouton est pressé
+    myled = mypin;       
 }
 
 void timer_off()
 {
- 
-    myled = mypin;
-    t.stop();
-    t.reset();
- 
+    myled = mypin;        
+    t.stop();              // Arrête le chronomètre quand le bouton est relâché
+    t.reset();             // Réinitialise le chronomètre
 }
 
 int main()
 {
-    mypin.rise(&timer_on);  // attach the address of the flip function to the rising edge
-    mypin.fall(&timer_off);
+    mypin.rise(&timer_on);  // Appelle la fonction `timer_on` lors de l'appuie du bouton 
+    mypin.fall(&timer_off); // Appelle la fonction `timer_off` lors du relachement du bouton 
 
-    while (1) {          // wait around, interrupts will interrupt this!
- 
-        ThisThread::sleep_for(250);
-        printf("mypin has value : %d \n\r", mypin.read());
-        printf("The time taken was %llu milliseconds\n", duration_cast<milliseconds>(t.elapsed_time()).count());
+    while (1) {            
+        ThisThread::sleep_for(250); 
+        printf("mypin has value : %d \n\r", mypin.read()); // Affiche l'état du bouton
+        printf("The time taken was %llu milliseconds\n", duration_cast<milliseconds>(t.elapsed_time()).count()); // Affiche le temps mesuré par le Timer 
     }
 }
-*/
+/*******************************************/
 
+
+/************** INTERRUTPION *********************/
 /*
 #include "mbed.h"
 InterruptIn mypin(BUTTON1); 
@@ -71,20 +117,23 @@ void flip()
     myled = mypin;
 }
 
-
 int main()
 {
-    mypin.rise(&flip);  // attach the address of the flip function to the rising edge
-    mypin.fall(&flip);
+    mypin.rise(&flip);  // Interruption sur appuie du bouton pour que la LED s'allume
+    mypin.fall(&flip);  // Interruption sur relachement du bouton pour que la LED s'eteigne
 
-    while (1) {          // wait around, interrupts will interrupt this!
+    while (1) {          
  
         ThisThread::sleep_for(250);
         printf("mypin has value : %d \n\r", mypin.read());
     }
 }
 */
+/*******************************************/
 
+
+
+/************** POLLING *********************/
 /*
 #include "mbed.h"
 DigitalIn mypin(BUTTON1); 
@@ -93,23 +142,15 @@ DigitalOut myled(LED1);
 
 int main()
 {
-    // check mypin object is initialized and connected to a pin
-    if (mypin.is_connected()) {
-        printf("mypin is connected and initialized! \n\r");
-    }
-
-    // Optional: set mode as PullUp/PullDown/PullNone/OpenDrain
-    mypin.mode(PullNone);
-
-    // press the button and see the console / led change
+   
     while (1) {
-        printf("mypin has value : %d \n\r", mypin.read());
-        myled = mypin; // toggle led based on value of button
+        printf("mypin has value : %d \n\r", mypin.read()); //Affichage de l'etat du bouton
+        myled = mypin; // Changement de l'etat de la LED
         ThisThread::sleep_for(250);
     }
 }
 */
-
+/*******************************************/
 
 /*
 // Blinking rate in milliseconds
