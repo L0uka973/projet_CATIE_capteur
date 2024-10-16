@@ -3,9 +3,96 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/*
 #include "mbed.h"
 
+Ticker flipper;
+DigitalOut myled(LED1);
 
+
+void flip()
+{
+    myled = !myled;
+}
+
+int main()
+{
+   
+    flipper.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)
+
+    
+}
+*/
+
+
+
+/*#include "mbed.h"
+InterruptIn mypin(BUTTON1); 
+DigitalOut myled(LED1);
+
+
+
+using namespace std::chrono;
+
+Timer t;
+
+
+
+
+void timer_on()
+{
+    t.start();
+    myled = mypin;
+    
+}
+
+void timer_off()
+{
+ 
+    myled = mypin;
+    t.stop();
+    t.reset();
+ 
+}
+
+
+int main()
+{
+    mypin.rise(&timer_on);  // attach the address of the flip function to the rising edge
+    mypin.fall(&timer_off);
+
+    while (1) {          // wait around, interrupts will interrupt this!
+ 
+        ThisThread::sleep_for(250);
+        printf("mypin has value : %d \n\r", mypin.read());
+        printf("The time taken was %llu milliseconds\n", duration_cast<milliseconds>(t.elapsed_time()).count());
+    }
+}*/
+#include "mbed.h"
+DigitalIn mypin(BUTTON1); 
+DigitalOut myled(LED1);
+
+
+int main()
+{
+    // check mypin object is initialized and connected to a pin
+    if (mypin.is_connected()) {
+        printf("mypin is connected and initialized! \n\r");
+    }
+
+    // Optional: set mode as PullUp/PullDown/PullNone/OpenDrain
+    mypin.mode(PullNone);
+
+    // press the button and see the console / led change
+    while (1) {
+        printf("mypin has value : %d \n\r", mypin.read());
+        myled = mypin; // toggle led based on value of button
+        ThisThread::sleep_for(250);
+    }
+}
+
+
+/*
 // Blinking rate in milliseconds
 #define BLINKING_RATE     500ms
 
@@ -40,4 +127,6 @@ int main()
         led = !led;
         ThisThread::sleep_for(BLINKING_RATE);
     }
-}
+}*/
+
+
