@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-/*
+
 #include "mbed.h"
 
 Ticker flipper;
@@ -17,13 +17,11 @@ void flip()
 
 int main()
 {
-   
-    flipper.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)
-
-    
+    flipper.attach(&flip, 2.0); // the address of the function to be attached (flip) and the interval (2 seconds)    
 }
-*/
 
+
+/*
 #include "mbed.h"
 InterruptIn mypin(BUTTON1); 
 DigitalOut myled(LED1);
@@ -61,7 +59,7 @@ int main()
         printf("The time taken was %llu milliseconds\n", duration_cast<milliseconds>(t.elapsed_time()).count());
     }
 }
-
+*/
 
 /*
 #include "mbed.h"
