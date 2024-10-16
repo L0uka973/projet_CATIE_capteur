@@ -24,8 +24,6 @@ int main()
 }
 */
 
-
-/*
 #include "mbed.h"
 InterruptIn mypin(BUTTON1); 
 DigitalOut myled(LED1);
@@ -63,8 +61,9 @@ int main()
         printf("The time taken was %llu milliseconds\n", duration_cast<milliseconds>(t.elapsed_time()).count());
     }
 }
-*/
 
+
+/*
 #include "mbed.h"
 InterruptIn mypin(BUTTON1); 
 DigitalOut myled(LED1);
@@ -86,7 +85,7 @@ int main()
         printf("mypin has value : %d \n\r", mypin.read());
     }
 }
-
+*/
 
 /*
 #include "mbed.h"
