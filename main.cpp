@@ -15,19 +15,17 @@
 // Create a BufferedSerial object to be used by the system I/O retarget code.
 static BufferedSerial serial_port(TARGET_TX_PIN, TARGET_RX_PIN, 9600);
 
-FileHandle *mbed::mbed_override_console(int fd)
-{
-    return &serial_port;
-}
-
 // Déclaration des threads
 Thread thread_ping(osPriorityNormal, 1024, nullptr, nullptr);
 Thread thread_pong(osPriorityNormal, 1024, nullptr, nullptr);
+Mutex mutex;
 
 void ping()
 {   
     for(int i = 0; i < 100; i++){
+        mutex.lock();
         printf("ping\n");
+        mutex.unlock();
     }
     
 }
@@ -35,17 +33,17 @@ void ping()
 void pong()
 {
     for(int i = 0; i < 100; i++){
+        mutex.lock();
         printf("pong\n");
+        mutex.unlock();
     }
 }
 
 int main() {
     
-   printf("Démarrage des threads\n");
 
     // Lancement des threads
     thread_ping.start(ping);
-
     thread_pong.start(pong);
 
 
@@ -58,7 +56,6 @@ int main() {
 #endif
 
     while (true) {
-
         // print to the console using the `serial_port` object.
     //printf( "Alive!\n" );
         led = !led;
@@ -66,3 +63,5 @@ int main() {
     }
     return 0;
 }
+
+
