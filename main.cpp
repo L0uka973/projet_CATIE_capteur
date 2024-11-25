@@ -1,120 +1,263 @@
-/* mbed Microcontroller Library
- * Copyright (c) 2019 ARM Limited
+/**
+ * Copyright (c) 2017, Arm Limited and affiliates.
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+#include <stdio.h>
 
 #include "mbed.h"
 
+#include "lorawan/LoRaWANInterface.h"
+#include "lorawan/system/lorawan_data_structures.h"
+#include "events/EventQueue.h"
 
-// Configuration des broches UART pour mbed
-UnbufferedSerial uart(PA_9, PA_10, 9600); // TX, RX, baudrate
-BufferedSerial pc(USBTX, USBRX);          // Interface série pour le PC
+// Application helpers
 
-// Commandes pour le capteur HPM
-const uint8_t CMD_START[] = {0x68, 0x01, 0x01, 0x96}; // Démarrer la mesure
-const uint8_t CMD_READ[]  = {0x68, 0x01, 0x04, 0x93}; // Lire les résultats
-const uint8_t CMD_STOP[]  = {0x68, 0x01, 0x02, 0x95}; // Arrêter la mesure
-const uint8_t CMD_STOP_SEND[]  = {0x68, 0x01, 0x20, 0x77}; // Arrêter auto send
+#include "lora_radio_helper.h"
 
-// Fonction pour envoyer une commande au capteur
-void send_command(const uint8_t* command, size_t length) {
-    uart.write(command, length);
+using namespace events;
+
+// Max payload size can be LORAMAC_PHY_MAXPAYLOAD.
+// This example only communicates with much shorter messages (<30 bytes).
+// If longer messages are used, these buffers must be changed accordingly.
+uint8_t tx_buffer[30];
+uint8_t rx_buffer[30];
+namespace {
+#define WAIT 1s
 }
+/*
+ * Sets up an application dependent transmission timer in ms. Used only when Duty Cycling is off for testing
+ */
+#define TX_TIMER                        10000
 
-void debug_raw_data(const uint8_t* buffer, size_t length) {
-    printf("Données brutes :");
-    for (size_t i = 0; i < length; i++) {
-        printf(" %02X", buffer[i]);
-    }
-    printf("\n");
-}
+/**
+ * Maximum number of events for the event queue.
+ * 10 is the safe number for the stack events, however, if application
+ * also uses the queue for whatever purposes, this number should be increased.
+ */
+#define MAX_NUMBER_OF_EVENTS            10
 
-void flush()
+/**
+ * Maximum number of retries for CONFIRMED messages before giving up
+ */
+#define CONFIRMED_MSG_RETRY_COUNTER     3
+
+
+
+/**
+ * Dummy sensor class object
+ */
+char *payload1 = "{\"PM1\": 32.5}";
+/* char *payload4 = "{\"PM4\": 32.5}";
+char *payload10 = "{\"PM10\": 32.5}";
+char *payload2_5 = "{\"PM2_5\": 32.5}"; */
+/**
+* This event queue is the global event queue for both the
+* application and stack. To conserve memory, the stack is designed to run
+* in the same thread as the application and the application is responsible for
+* providing an event queue to the stack that will be used for ISR deferment as
+* well as application information event queuing.
+*/
+static EventQueue ev_queue(MAX_NUMBER_OF_EVENTS *EVENTS_EVENT_SIZE);
+
+/**
+ * Event handler.
+ *
+ * This will be passed to the LoRaWAN stack to queue events for the
+ * application which in turn drive the application.
+ */
+static void lora_event_handler(lorawan_event_t event);
+
+/**
+ * Constructing Mbed LoRaWANInterface and passing it the radio object from lora_radio_helper.
+ */
+static LoRaWANInterface lorawan(radio);
+
+/**
+ * Application specific callbacks
+ */
+static lorawan_app_callbacks_t callbacks;
+
+/**
+ * Entry point for application
+ */
+int main(void)
 {
-    uint8_t temp = 0;
-    while (uart.readable())
-    {   
-        uart.read(&temp, 1);
+  
+    // stores the status of a call to LoRaWAN protocol
+    lorawan_status_t retcode;
+
+    // Initialize LoRaWAN stack
+    if (lorawan.initialize(&ev_queue) != LORAWAN_STATUS_OK) {
+        printf("\r\n LoRa initialization failed! \r\n");
+        return -1;
     }
+
+    printf("\r\n Mbed LoRaWANStack initialized \r\n");
+
+    // prepare application callbacks
+    callbacks.events = mbed::callback(lora_event_handler);
+    lorawan.add_app_callbacks(&callbacks);
+
+    // Set number of retries in case of CONFIRMED messages
+    if (lorawan.set_confirmed_msg_retries(CONFIRMED_MSG_RETRY_COUNTER)
+            != LORAWAN_STATUS_OK) {
+        printf("\r\n set_confirmed_msg_retries failed! \r\n\r\n");
+        return -1;
+    }
+
+    printf("\r\n CONFIRMED message retries : %d \r\n",
+           CONFIRMED_MSG_RETRY_COUNTER);
+
+    // Enable adaptive data rate
+    if (lorawan.enable_adaptive_datarate() != LORAWAN_STATUS_OK) {
+        printf("\r\n enable_adaptive_datarate failed! \r\n");
+        return -1;
+    }
+
+    printf("\r\n Adaptive data  rate (ADR) - Enabled \r\n");
+
+    retcode = lorawan.connect();
+
+    if (retcode == LORAWAN_STATUS_OK ||
+            retcode == LORAWAN_STATUS_CONNECT_IN_PROGRESS) {
+    } else {
+        printf("\r\n Connection error, code = %d \r\n", retcode);
+        return -1;
+    }
+
+    printf("\r\n Connection - In Progress ...\r\n");
+
+    // make your event queue dispatching events forever
+    ev_queue.dispatch_forever();
+
+    return 0;
 }
 
-bool read_sensor_data(uint16_t &pm25, uint16_t &pm10, uint16_t &pm1, uint16_t &pm4) {
-    uint8_t buffer[32] = {0};
-    uint8_t octet = 0;
-    flush();
-    for(int i = 0; i<32; i++){
-            //while (uart.readable()) {
-                uart.read(&octet, 1);
-                //printf(" %02X\n", octet);
-                buffer[i] = octet;
-            //}
-        }
  
-        // Affiche les données brutes pour déboguer
-        debug_raw_data(buffer, 32);
 
-        // Vérification de l'en-tête
-        if (buffer[0] == 0x42 && buffer[1] == 0x4D) {
-            pm1 = (buffer[4] << 8) | buffer[5]; // PM1
-            pm25 = (buffer[6] << 8) | buffer[7]; // PM2.5
-            pm4 = (buffer[8] << 8) | buffer[9]; // PM4
-            pm10 = (buffer[10] << 8) | buffer[11]; // PM10
-            return true;
+/**
+ * Sends a message to the Network Server
+ */
+static void send_message()
+{
+    uint16_t packet_len;
+    int16_t retcode;
+    int32_t sensor_value;
+
+    // TODO: Read sensor data
+    memcpy(tx_buffer, payload1, strlen(payload1));
+    packet_len = strlen(payload1);
+
+    retcode = lorawan.send(MBED_CONF_LORA_APP_PORT, tx_buffer, packet_len,
+                           MSG_UNCONFIRMED_FLAG);
+
+    if (retcode < 0) {
+        retcode == LORAWAN_STATUS_WOULD_BLOCK ? printf("send - WOULD BLOCK\r\n")
+        : printf("\r\n send() - Error code %d \r\n", retcode);
+
+        if (retcode == LORAWAN_STATUS_WOULD_BLOCK) {
+            //retry in 3 seconds
+            if (MBED_CONF_LORA_DUTY_CYCLE_ON) {
+                ev_queue.call_in(3000, send_message);
+            }
         }
-    return false;
+        return;
+    }
+
+    printf("\r\n %d bytes scheduled for transmission \r\n", retcode);
+    memset(tx_buffer, 0, sizeof(tx_buffer));
 }
 
-int main() {
-    pc.set_baud(9600);
+/**
+ * Receive a message from the Network Server
+ */
+static void receive_message()
+{
+    uint8_t port;
+    int flags;
+    int16_t retcode = lorawan.receive(rx_buffer, sizeof(rx_buffer), port, flags);
 
-    //Flush
-    uint8_t buff[16] = {0};
-    uint8_t oc = 0;
-    // Initialisation
-    printf("Initialisation du capteur HPM\n");
-    printf("STOP AUTO SEND\n");
-    send_command(CMD_STOP_SEND, sizeof(CMD_STOP_SEND));
-    for(int i = 0; i<2; i++){
-                uart.read(&oc, 1);
-                printf(" %02X\n", oc);
+    if (retcode < 0) {
+        printf("\r\n receive() - Error code %d \r\n", retcode);
+        return;
     }
-    printf("START\n");
-    send_command(CMD_START, sizeof(CMD_START));
-     for(int i = 0; i<2; i++){
-                uart.read(&oc, 1);
-                printf(" %02X\n", oc);
+
+    printf(" RX Data on port %u (%d bytes): ", port, retcode);
+    for (uint8_t i = 0; i < retcode; i++) {
+        printf("%02x ", rx_buffer[i]);
     }
-    thread_sleep_for(6000); // Attente pour stabilisation
-   
+    printf("\r\n");
     
-    while (true) {
-        uint16_t pm25 = 0, pm10 = 0, pm1 = 0, pm4 = 0;
-
-        // Lecture des données
-        printf("READ\n");
-        send_command(CMD_READ, sizeof(CMD_READ));
-         for(int i = 0; i<16; i++){
-                uart.read(&oc, 1);
-                //printf("%d : %02X\n", i, oc);
-                buff[i] = oc;
-         }
-        printf("ok\n");
-        for (size_t i = 0; i < 16; i++) {
-        printf(" %d, %02X\n", i, buff[i]);
-        }
-        thread_sleep_for(2000); // Délai avant lecture
-        
-        if (read_sensor_data(pm25, pm10, pm1, pm4)) {
-            printf("PM1: %d µg/m3\nPM2.5: %d µg/m3\nPM4: %d µg/m3\nPM10: %d µg/m3\n", pm1, pm25, pm4, pm10);
-        } else {
-            printf("Erreur de lecture des données du capteur\n");
-        }
-       
-        thread_sleep_for(5000); // Attente avant la prochaine lecture
-    }
-
-    // Arrêt du capteur (si nécessaire)
-    send_command(CMD_STOP, sizeof(CMD_STOP));
+    memset(rx_buffer, 0, sizeof(rx_buffer));
 }
 
+/**
+ * Event handler
+ */
+static void lora_event_handler(lorawan_event_t event)
+{
+    switch (event) {
+        case CONNECTED:
+            printf("\r\n Connection - Successful \r\n");
+            if (MBED_CONF_LORA_DUTY_CYCLE_ON) {
+                send_message();
+            } else {
+                ev_queue.call_every(TX_TIMER, send_message);
+            }
 
+            break;
+        case DISCONNECTED:
+            ev_queue.break_dispatch();
+            printf("\r\n Disconnected Successfully \r\n");
+            break;
+        case TX_DONE:
+            printf("\r\n Message Sent to Network Server \r\n");
+            if (MBED_CONF_LORA_DUTY_CYCLE_ON) {
+                send_message();
+            }
+            break;
+        case TX_TIMEOUT:
+        case TX_ERROR:
+        case TX_CRYPTO_ERROR:
+        case TX_SCHEDULING_ERROR:
+            printf("\r\n Transmission Error - EventCode = %d \r\n", event);
+            // try again
+            if (MBED_CONF_LORA_DUTY_CYCLE_ON) {
+                send_message();
+            }
+            break;
+        case RX_DONE:
+            printf("\r\n Received message from Network Server \r\n");
+            receive_message();
+            break;
+        case RX_TIMEOUT:
+        case RX_ERROR:
+            printf("\r\n Error in reception - Code = %d \r\n", event);
+            break;
+        case JOIN_FAILURE:
+            printf("\r\n OTAA Failed - Check Keys \r\n");
+            break;
+        case UPLINK_REQUIRED:
+            printf("\r\n Uplink required by NS \r\n");
+            if (MBED_CONF_LORA_DUTY_CYCLE_ON) {
+                send_message();
+            }
+            break;
+        default:
+            MBED_ASSERT("Unknown Event");
+    }
+}
+
+// EOF
