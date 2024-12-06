@@ -15,12 +15,18 @@
  * limitations under the License.
  */
 #include <stdio.h>
+//#include <string.h>
 
 #include "mbed.h"
+#include "hpma115/hpma115.h"
 
 #include "lorawan/LoRaWANInterface.h"
 #include "lorawan/system/lorawan_data_structures.h"
 #include "events/EventQueue.h"
+
+// Specify different pins to test printing on UART other than the console UART.
+#define TARGET_TX_PIN                                                     USBTX
+#define TARGET_RX_PIN                                                     USBRX
 
 // Application helpers
 
@@ -33,9 +39,7 @@ using namespace events;
 // If longer messages are used, these buffers must be changed accordingly.
 uint8_t tx_buffer[30];
 uint8_t rx_buffer[30];
-namespace {
-#define WAIT 1s
-}
+
 /*
  * Sets up an application dependent transmission timer in ms. Used only when Duty Cycling is off for testing
  */
@@ -54,14 +58,22 @@ namespace {
 #define CONFIRMED_MSG_RETRY_COUNTER     3
 
 
+namespace {
+#define WAIT 1s
+}
+using namespace sixtron;
+static hpma115_data_t data;
+HPMA115::ErrorType err;
+
+HPMA115 sensor(PA_9, PA_10);
+
+BufferedSerial pc(USBTX, USBRX);     
 
 /**
  * Dummy sensor class object
  */
-char *payload1 = "{\"PM1\": 32.5}";
-/* char *payload4 = "{\"PM4\": 32.5}";
-char *payload10 = "{\"PM10\": 32.5}";
-char *payload2_5 = "{\"PM2_5\": 32.5}"; */
+char payload[500] = {};
+
 /**
 * This event queue is the global event queue for both the
 * application and stack. To conserve memory, the stack is designed to run
@@ -94,7 +106,7 @@ static lorawan_app_callbacks_t callbacks;
  */
 int main(void)
 {
-  
+
     // stores the status of a call to LoRaWAN protocol
     lorawan_status_t retcode;
 
@@ -139,13 +151,17 @@ int main(void)
 
     printf("\r\n Connection - In Progress ...\r\n");
 
+
+    //ThisThread::sleep_for(WAIT);
+
+
     // make your event queue dispatching events forever
     ev_queue.dispatch_forever();
 
+
+
     return 0;
 }
-
- 
 
 /**
  * Sends a message to the Network Server
@@ -157,8 +173,28 @@ static void send_message()
     int32_t sensor_value;
 
     // TODO: Read sensor data
-    memcpy(tx_buffer, payload1, strlen(payload1));
-    packet_len = strlen(payload1);
+    err = sensor.stop_measurement();
+    assert(err == HPMA115::ErrorType::Ok);
+    err=sensor.stop_autosend();
+    assert(err == HPMA115::ErrorType::Ok);
+
+    err = sensor.start_measurement();
+    assert(err == HPMA115::ErrorType::Ok);
+    err = sensor.read_measurement(&data);
+
+        if (err == HPMA115::ErrorType::Ok) {
+            printf("Data: ");
+            if (data.pm1_pm4_valid) {
+                printf("PM1.0: %d, PM4.0: %d ", data.pm1_0, data.pm4_0);
+                sprintf(payload, "{\"PM1\": %d, \"PM2_5\": %d, \"PM4\": %d, \"PM10\": %d}", data.pm1_0, data.pm2_5, data.pm4_0, data.pm10);
+            }
+            printf("PM10: %d, PM2.5: %d\n", data.pm10, data.pm2_5);
+        }
+
+   
+   
+    memcpy(tx_buffer, payload, strlen(payload));
+    packet_len = strlen(payload);
 
     retcode = lorawan.send(MBED_CONF_LORA_APP_PORT, tx_buffer, packet_len,
                            MSG_UNCONFIRMED_FLAG);

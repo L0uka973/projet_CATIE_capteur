@@ -1,4 +1,15 @@
 ![](./resources/official_armmbed_example_badge.png)
+
+Les prochaines étapes se basent sur l'hypothèse que l'utilisateur a déjà l'environnement mbed installé.
+
+# Téléchargement du dépot git
+
+git clone https://github.com/L0uka973/projet_CATIE_capteur
+mbed new .
+mbed deploy
+mbed target ZEST_CORE_FMLR-72
+
+
 # Blinky Mbed OS example
 
 The example project is part of the [Arm Mbed OS Official Examples](https://os.mbed.com/code/) and is the [getting started example for Mbed OS](https://os.mbed.com/docs/mbed-os/latest/quick-start/index.html). It contains an application that repeatedly blinks an LED on supported [Mbed boards](https://os.mbed.com/platforms/).
@@ -71,3 +82,10 @@ If you have problems, you can review the [documentation](https://os.mbed.com/doc
 The software is provided under Apache-2.0 license. Contributions to this project are accepted under the same license. Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for more info.
 
 This project contains code from other projects. The original license text is included in those source files. They must comply with our license guide.
+send_message
+
+
+comment installer le depot git, commande et comment le deployer 
+expliquer les exos 
+explication le projet
+différences, processus 
