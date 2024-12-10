@@ -1,5 +1,7 @@
 ![](./resources/official_armmbed_example_badge.png)
 
+<img width="581" alt="CAPTEUR_EMB2" src="https://github.com/user-attachments/assets/bfd7f79f-2d37-4b22-a5b5-c18fa8271971">
+
 Les prochaines étapes se basent sur l'hypothèse que l'utilisateur a déjà l'environnement mbed installé.
 
 # Téléchargement du dépot git
