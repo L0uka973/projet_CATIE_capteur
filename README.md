@@ -1,6 +1,10 @@
 ![](./resources/official_armmbed_example_badge.png)
 
+<img width="563" alt="CAPTEUR_EMB1" src="https://github.com/user-attachments/assets/ff279894-88e1-49dc-8234-7ecbac1c22e5">
+
 <img width="581" alt="CAPTEUR_EMB2" src="https://github.com/user-attachments/assets/bfd7f79f-2d37-4b22-a5b5-c18fa8271971">
+
+
 
 Les prochaines étapes se basent sur l'hypothèse que l'utilisateur a déjà l'environnement mbed installé.
 
@@ -10,6 +14,22 @@ git clone https://github.com/L0uka973/projet_CATIE_capteur
 mbed new .
 mbed deploy
 mbed target ZEST_CORE_FMLR-72
+
+# Exercices
+
+Polling du bouton
+Utiliser une interruption
+Ajouter un timer
+Contrôle de la LED par un ticker
+Piloter la fréquence de clignotement
+
+
+# Projet
+
+Communication avec le capteur
+
+Pb lecture des données (lecture datasheet -> capteur en autosend)
+utilisation du driver du catie pour rattraper le temps perdu
 
 
 # Blinky Mbed OS example
