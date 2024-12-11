@@ -1,9 +1,5 @@
 ![](./resources/official_armmbed_example_badge.png)
 
-
-
-
-
 Les prochaines étapes se basent sur l'hypothèse que l'utilisateur a déjà l'environnement mbed installé.
 
 # Téléchargement du dépot git
@@ -54,16 +50,37 @@ Pour gagner du temps avec la connection de l'enseirb
 
 # Exercices
 
+Pour les diffférents exercices il faut copier le contenue du main.cpp correspondant au commit de l'exercice et le coller dans le main.cpp du projet.
+
    1. Polling du bouton.
      
-L'exercice du Polling avec le bouton se trouve dans le commit "Pooling du bouton" : https://github.com/L0uka973/projet_CATIE_capteur/commit/fba7df308ef7c4425ebff8b5c5e005ae7dd080c4
+L'exercice du Polling avec le bouton se trouve dans le commit "Pooling du bouton" : https://github.com/L0uka973/projet_CATIE_capteur/blob/fba7df308ef7c4425ebff8b5c5e005ae7dd080c4/main.cpp
 
-   1. Utiliser une interruption.
+   2. Utiliser une interruption.
 
-L'exercice avec l'interruption se trouve dans le commit "interruption" : https://github.com/L0uka973/projet_CATIE_capteur/commit/8f73846f4bf2cb6d933122575ab8f865d9f9ef60
-   1. Ajouter un timer
-   1. Contrôle de la LED par un ticker
-   1. Piloter la fréquence de clignotement
+L'exercice avec l'interruption se trouve dans le commit "interruption" : https://github.com/L0uka973/projet_CATIE_capteur/blob/8f73846f4bf2cb6d933122575ab8f865d9f9ef60/main.cpp
+
+   3. Ajouter un timer
+
+L'exercice avec timer se trouve dans le commit "Timer" : https://github.com/L0uka973/projet_CATIE_capteur/blob/6733e83df5dda08faff43534e47ef319fc7d60bb/main.cpp
+    
+   5. Contrôle de la LED par un ticker
+
+L'exercice avec ticker se trouve dans le commit "Ticker" : https://github.com/L0uka973/projet_CATIE_capteur/blob/369bdf9e77eedfa843995a632f8d4b59d574f63a/main.cpp
+      
+   7. Piloter la fréquence de clignotement
+
+L'exercice avec le côntrole de la fréquence se trouve dans le commit "  TP FREQUENCE : Utilisation d'une variable globale qui est modifiée afin de modifier la fréquence de clignotemment de la LED" : https://github.com/L0uka973/projet_CATIE_capteur/blob/e022e2a7069a0f2eb22725b9378da28fadb15ca5/main.cpp
+
+Pour réaliser cette exercice, nous avons utilisé une variable globale qui va décrémenter si on appuie sur le bouton. 
+
+   8. Thread
+
+      https://github.com/L0uka973/projet_CATIE_capteur/blob/b7a105368b8a6cfcbf0db97cad3d91482a6fdb49/main.cpp
+
+   9. Mutex
+
+       https://github.com/L0uka973/projet_CATIE_capteur/blob/1c440253c51e7e798cc0412a40d09223c30109de/main.cpp
 
 
 # Projet
