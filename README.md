@@ -56,7 +56,8 @@ Pour gagner du temps avec la connection de l'enseirb
 
 # Exercices
 
-Polling du bouton
+   * Polling du bouton
+L'exercice du Polling avec le bouton se trouve dans le commit "fba7df308ef7c4425ebff8b5c5e005ae7dd080c4"
 Utiliser une interruption
 Ajouter un timer
 Contrôle de la LED par un ticker
