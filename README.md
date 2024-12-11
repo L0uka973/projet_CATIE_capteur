@@ -13,21 +13,26 @@ Les prochaines étapes se basent sur l'hypothèse que l'utilisateur a déjà l'e
 ```bash
    $ git clone https://github.com/L0uka973/projet_CATIE_capteur
 ```
+Avoir un mbed-os.zip et le coller dans le repertoire `projet_CATIE_capteur\`
 Ensuite dans le repertoire cloné `projet_CATIE_capteur\` 
-cd projet_CATIE_capteur
-Avoir un dossier mbed-os.zip pour gagner du temps avec la connection de l'enseirb 
+```bash
+   $ cd projet_CATIE_capteur
+```
 
-
+Pour gagner du temps avec la connection de l'enseirb 
 ```bash
    $ unzip mbed-os.zip
 ```
-rajouter le fichier .lib
+
 ```bash
-   $ git clone https://github.com/catie-aq/mbed_zest-core-fmlr-72
+rm -d mbed_zest-core-fmlr-72
 ```
 
 ```bash
    $ mbed deploy
+```
+```bash
+   $ mbed config root .
 ```
 ```bash
    $ mbed target ZEST_CORE_FMLR-72
@@ -35,10 +40,11 @@ rajouter le fichier .lib
 ```bash
    $ mbed toolchain GCC_ARM
 ```
+   * Pour compiler
 ```bash
    $ mbed compile
 ```
-
+   * Pour flash la carte
 ```bash
    $ sixtron_flash
 ```
