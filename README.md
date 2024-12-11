@@ -3,35 +3,37 @@
 Les prochaines étapes se basent sur l'hypothèse que l'utilisateur a déjà l'environnement mbed installé.
 
 # Téléchargement du dépot git
-
+   * Activer l'environnement virtuel pour ne pas oublier
+```bash
+   $ source <env_name>/bin/activate
+```
+   * Clonage du répertoire git
 ```bash
    $ git clone https://github.com/L0uka973/projet_CATIE_capteur
 ```
-Avoir un mbed-os.zip et le coller dans le repertoire `projet_CATIE_capteur\`
-Ensuite dans le repertoire cloné `projet_CATIE_capteur\` 
+Pour éviter d'utiliser la connection de l'enseirb, avoir un dossier mbed-os.zip et le coller dans le repertoire `projet_CATIE_capteur\`
+   * Se rendre dans le repertoire cloné `projet_CATIE_capteur\` 
 ```bash
    $ cd projet_CATIE_capteur
 ```
-
-Pour gagner du temps avec la connection de l'enseirb 
+   * Pour gagner du temps avec la connection de l'enseirb 
 ```bash
    $ unzip mbed-os.zip
 ```
-
+   * Pour supprimer un répertoire qui n'a pas pu être enlevé du dépot git
 ```bash
    $ rm -d mbed_zest-core-fmlr-72
 ```
-
+   * Installation des dépendances des différents fichiers .lib
 ```bash
    $ mbed deploy
 ```
+   * Pour être sur que le répertoire actuel est le répertoire racine du projet Mbed
 ```bash
    $ mbed config root .
 ```
 ```bash
    $ mbed target ZEST_CORE_FMLR-72
-```
-```bash
    $ mbed toolchain GCC_ARM
 ```
    * Pour compiler
@@ -64,21 +66,21 @@ L'exercice avec l'interruption se trouve dans le commit "interruption" : https:/
 
 L'exercice avec timer se trouve dans le commit "Timer" : https://github.com/L0uka973/projet_CATIE_capteur/blob/6733e83df5dda08faff43534e47ef319fc7d60bb/main.cpp
     
-   5. Contrôle de la LED par un ticker
+   4. Contrôle de la LED par un ticker
 
 L'exercice avec ticker se trouve dans le commit "Ticker" : https://github.com/L0uka973/projet_CATIE_capteur/blob/369bdf9e77eedfa843995a632f8d4b59d574f63a/main.cpp
       
-   7. Piloter la fréquence de clignotement
+   5. Piloter la fréquence de clignotement
 
 L'exercice avec le côntrole de la fréquence se trouve dans le commit "  TP FREQUENCE : Utilisation d'une variable globale qui est modifiée afin de modifier la fréquence de clignotemment de la LED" : https://github.com/L0uka973/projet_CATIE_capteur/blob/e022e2a7069a0f2eb22725b9378da28fadb15ca5/main.cpp
 
 Pour réaliser cette exercice, nous avons utilisé une variable globale qui va décrémenter si on appuie sur le bouton. 
 
-   8. Thread
+   6. Thread
 
       https://github.com/L0uka973/projet_CATIE_capteur/blob/b7a105368b8a6cfcbf0db97cad3d91482a6fdb49/main.cpp
 
-   9. Mutex
+   7. Mutex
 
        https://github.com/L0uka973/projet_CATIE_capteur/blob/1c440253c51e7e798cc0412a40d09223c30109de/main.cpp
 
