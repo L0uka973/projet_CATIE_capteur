@@ -17,13 +17,15 @@ Ensuite dans le repertoire cloné `projet_CATIE_capteur\`
 cd projet_CATIE_capteur
 Avoir un dossier mbed-os.zip pour gagner du temps avec la connection de l'enseirb 
 
+
+```bash
+   $ unzip mbed-os.zip
+```
+rajouter le fichier .lib
 ```bash
    $ git clone https://github.com/catie-aq/mbed_zest-core-fmlr-72
 ```
-unzip mbed-os.zip
-```bash
-   $ mbed new .
-```
+
 ```bash
    $ mbed deploy
 ```
