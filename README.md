@@ -1,8 +1,6 @@
 ![](./resources/official_armmbed_example_badge.png)
 
-<img width="563" alt="CAPTEUR_EMB1" src="https://github.com/user-attachments/assets/ff279894-88e1-49dc-8234-7ecbac1c22e5">
 
-<img width="581" alt="CAPTEUR_EMB2" src="https://github.com/user-attachments/assets/bfd7f79f-2d37-4b22-a5b5-c18fa8271971">
 
 
 
@@ -56,13 +54,16 @@ Pour gagner du temps avec la connection de l'enseirb
 
 # Exercices
 
-   * Polling du bouton
+   1. Polling du bouton.
+     
 L'exercice du Polling avec le bouton se trouve dans le commit "Pooling du bouton" : https://github.com/L0uka973/projet_CATIE_capteur/commit/fba7df308ef7c4425ebff8b5c5e005ae7dd080c4
 
-Utiliser une interruption
-Ajouter un timer
-Contrôle de la LED par un ticker
-Piloter la fréquence de clignotement
+   1. Utiliser une interruption.
+
+L'exercice avec l'interruption se trouve dans le commit "interruption" : https://github.com/L0uka973/projet_CATIE_capteur/commit/8f73846f4bf2cb6d933122575ab8f865d9f9ef60
+   1. Ajouter un timer
+   1. Contrôle de la LED par un ticker
+   1. Piloter la fréquence de clignotement
 
 
 # Projet
@@ -71,7 +72,9 @@ Communication avec le capteur
 
 Pb lecture des données (lecture datasheet -> capteur en autosend)
 utilisation du driver du catie pour rattraper le temps perdu
+<img width="563" alt="CAPTEUR_EMB1" src="https://github.com/user-attachments/assets/ff279894-88e1-49dc-8234-7ecbac1c22e5">
 
+<img width="581" alt="CAPTEUR_EMB2" src="https://github.com/user-attachments/assets/bfd7f79f-2d37-4b22-a5b5-c18fa8271971">
 
 # Blinky Mbed OS example
 
