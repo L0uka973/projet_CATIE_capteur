@@ -25,7 +25,7 @@ Pour gagner du temps avec la connection de l'enseirb
 ```
 
 ```bash
-rm -d mbed_zest-core-fmlr-72
+   $ rm -d mbed_zest-core-fmlr-72
 ```
 
 ```bash
