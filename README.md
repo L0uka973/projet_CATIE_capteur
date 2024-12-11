@@ -13,6 +13,8 @@ Les prochaines étapes se basent sur l'hypothèse que l'utilisateur a déjà l'e
 ```bash
    $ git clone https://github.com/L0uka973/projet_CATIE_capteur
 ```
+Ensuite dans le repertoire cloné `projet_CATIE_capteur\`
+
 ```bash
    $ git clone https://github.com/catie-aq/mbed_zest-core-fmlr-72
 ```
