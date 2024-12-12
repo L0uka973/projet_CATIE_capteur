@@ -44,15 +44,9 @@ Pour éviter d'utiliser la connection de l'enseirb, avoir un dossier mbed-os.zip
 ```bash
    $ sixtron_flash
 ```
-
-
-
-
-
-
 # Exercices
 
-Pour les diffférents exercices il faut copier le contenue du main.cpp correspondant au commit de l'exercice et le coller dans le main.cpp du projet.
+Pour les diffférents exercices il faut copier le contenue du main.cpp correspondant au commit de l'exercice et le coller dans le main.cpp du projet. Ensuite compiler et flasher la carte. 
 
    1. Polling du bouton.
      
@@ -78,83 +72,40 @@ Pour réaliser cette exercice, nous avons utilisé une variable globale qui va d
 
    6. Thread
 
-      https://github.com/L0uka973/projet_CATIE_capteur/blob/b7a105368b8a6cfcbf0db97cad3d91482a6fdb49/main.cpp
+L'exercice Thread se trouve dans le commit "TP thread" : https://github.com/L0uka973/projet_CATIE_capteur/blob/b7a105368b8a6cfcbf0db97cad3d91482a6fdb49/main.cpp
+Pour cet exercice, deux threads ping et pong sont crées pour être s'éxécuter en parallèle. De plus, en tâche de fond une LED clignotte toutes les secondes.
 
    7. Mutex
 
-       https://github.com/L0uka973/projet_CATIE_capteur/blob/1c440253c51e7e798cc0412a40d09223c30109de/main.cpp
-
+L'exercice Mutex se trouve dans le commit "TP mutex" : https://github.com/L0uka973/projet_CATIE_capteur/blob/1c440253c51e7e798cc0412a40d09223c30109de/main.cpp
+Cette fois ci, un mutex est utilisé pour synchroniser l'accès au terminal (printf). Ainsi, on évite que les deux messages des threads s'entrelacent. 
 
 # Projet
+## Communication avec le capteur
+La carte capteur que nous avons en notre possession est la carte "Zest_Sensor_Dust". Pour communiquer avec le capteur, nous devons comprendre la datasheet. 
+Le module embarque le capteur de la marque Honeywell "HPMA115C0" en version compact. Pour résumer les fonctionnalités de ce capteur, il permet de mesurer 4 tailles de particule (PM1, PM2.5, PM4 et PM10). Le capteur communique en UART. 
 
-Communication avec le capteur
+Il y a plusieurs commandes qui permettent de communiquer avec le capteur. Les principales sont : Lecture des données, Début/Arrêt de la mesure, Activation/Arrêt de l'autosend de la mesure.
+Nous avons perdu beaucoup de temps à comprendre la cohérence des données reçues avec les données de la datasheet. Mais l'erreur principale que nous avons fait est de ne pas avoir arrêter l'autosend. Pendant un moment on pensait que ce mode était désactivé ce qui nous donnait des résultats illogiques.
+Pour être sur de lire correctement les données il fallait envoyer les bonnes commandes : 
+  1. D'abord il faut arrêter l'autosend
+  2. Ensuite il faut commencer la prise de mesure
+  3. On peut maintenant lire convenablement les données du capteur.
 
-Pb lecture des données (lecture datasheet -> capteur en autosend)
-utilisation du driver du catie pour rattraper le temps perdu
+Le fichier source se trouve dans le commit "uart DUST fonctionnel" : https://github.com/L0uka973/projet_CATIE_capteur/blob/1410516eaa2958ca7fc057429813a2961958aed0/main.cpp
+## LoRa
+Nous avons perdu beaucoup de temps sur la communication avec le capteur alors pour le rattraper nous avons utiliser les drivers du CATIE pour la suite du projet.
+
+La première étape était d'envoyer une donnée brute sur l'interface LoRaWAN et d'afficher cette donnée sur ThingsBoard. Le code source est disponible au commit "Ajout des drivers pour la carte Dust et envoie d'une donnée à l'aide de l'exemple LoRa" : https://github.com/L0uka973/projet_CATIE_capteur/blob/47189aa0c80960224c1e46f6438ac13ad5d71d83/hpma115.cpp
+
+La dernière étape est de remplacer remplacer ces données brutes par celles du capteur. Pour cela, nous allons utiliser le driver du catie pour lire ces données. On utilise sprintf pour convertir les données en string avec les balises associées. Les balises ont pour format : < \"PMx\": >.
+Concernant l'affichage sur ThingsBoard, nous avons 4 boards pour les 4 catégories. Toutes les valeurs sont affichées et des courbes permettent de retranscrire les données antérieures. Source au commit " Projet Capteur terminé avec affichage grâce à LoRa" : https://github.com/L0uka973/projet_CATIE_capteur/blob/ec6fb6374c7c07b677166a2658aac205091a0602/main.cpp
+
 <img width="563" alt="CAPTEUR_EMB1" src="https://github.com/user-attachments/assets/ff279894-88e1-49dc-8234-7ecbac1c22e5">
 
 <img width="581" alt="CAPTEUR_EMB2" src="https://github.com/user-attachments/assets/bfd7f79f-2d37-4b22-a5b5-c18fa8271971">
 
-# Blinky Mbed OS example
-
-The example project is part of the [Arm Mbed OS Official Examples](https://os.mbed.com/code/) and is the [getting started example for Mbed OS](https://os.mbed.com/docs/mbed-os/latest/quick-start/index.html). It contains an application that repeatedly blinks an LED on supported [Mbed boards](https://os.mbed.com/platforms/).
-
-You can build the project with all supported [Mbed OS build tools](https://os.mbed.com/docs/mbed-os/latest/tools/index.html). However, this example project specifically refers to the command-line interface tools, [Arm Mbed CLI 1](https://github.com/ARMmbed/mbed-cli#installing-mbed-cli) and [Mbed CLI 2](https://github.com/ARMmbed/mbed-tools#installation).
-
-(Note: To see a rendered example you can import into the Arm Online Compiler, please see our [import quick start](https://os.mbed.com/docs/mbed-os/latest/quick-start/online-with-the-online-compiler.html#importing-the-code).)
-
-## Mbed OS build tools
-
-### Mbed CLI 2
-Starting with version 6.5, Mbed OS uses Mbed CLI 2. It uses Ninja as a build system, and CMake to generate the build environment and manage the build process in a compiler-independent manner. If you are working with Mbed OS version prior to 6.5 then check the section [Mbed CLI 1](#mbed-cli-1).
-1. [Install Mbed CLI 2](https://os.mbed.com/docs/mbed-os/latest/build-tools/install-or-upgrade.html).
-1. From the command-line, import the example: `mbed-tools import mbed-os-example-blinky`
-1. Change the current directory to where the project was imported.
-
-### Mbed CLI 1
-1. [Install Mbed CLI 1](https://os.mbed.com/docs/mbed-os/latest/quick-start/offline-with-mbed-cli.html).
-1. From the command-line, import the example: `mbed import mbed-os-example-blinky`
-1. Change the current directory to where the project was imported.
-
-## Application functionality
-
-The `main()` function is the single thread in the application. It toggles the state of a digital output connected to an LED on the board.
-
-**Note**: This example requires a target with RTOS support, i.e. one with `rtos` declared in `supported_application_profiles` in `targets/targets.json` in [mbed-os](https://github.com/ARMmbed/mbed-os). For non-RTOS targets (usually with small memory sizes), please use [mbed-os-example-blinky-baremetal](https://github.com/ARMmbed/mbed-os-example-blinky-baremetal) instead.
-
-## Building and running
-
-1. Connect a USB cable between the USB port on the board and the host computer.
-1. Run the following command to build the example project and program the microcontroller flash memory:
-
-    * Mbed CLI 2
-
-    ```bash
-    $ mbed-tools compile -m <TARGET> -t <TOOLCHAIN> --flash
-    ```
-
-    * Mbed CLI 1
-
-    ```bash
-    $ mbed compile -m <TARGET> -t <TOOLCHAIN> --flash
-    ```
-
-Your PC may take a few minutes to compile your code.
-
-The binary is located at:
-* **Mbed CLI 2** - `./cmake_build/<TARGET>/develop/<TOOLCHAIN>/mbed-os-example-blinky.bin`
-* **Mbed CLI 1** - `./BUILD/<TARGET>/<TOOLCHAIN>/mbed-os-example-blinky.bin`
-
-Alternatively, you can manually copy the binary to the board, which you mount on the host computer over USB.
-
-## Expected output
-The LED on your target turns on and off every 500 milliseconds.
-
-
-## Troubleshooting
-If you have problems, you can review the [documentation](https://os.mbed.com/docs/latest/tutorials/debugging.html) for suggestions on what could be wrong and how to fix it.
-
-## Related Links
+# Related Links
 
 * [Mbed OS Stats API](https://os.mbed.com/docs/latest/apis/mbed-statistics.html).
 * [Mbed OS Configuration](https://os.mbed.com/docs/latest/reference/configuration.html).
