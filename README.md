@@ -50,32 +50,32 @@ Pour les diffférents exercices il faut copier le contenue du main.cpp correspon
 
    1. Polling du bouton.
      
-L'exercice du Polling avec le bouton se trouve dans le commit "Pooling du bouton" : https://github.com/L0uka973/projet_CATIE_capteur/blob/fba7df308ef7c4425ebff8b5c5e005ae7dd080c4/main.cpp
+L'exercice du Polling avec le bouton se trouve dans le commit "Exercice Pooling" : https://github.com/L0uka973/projet_CATIE_capteur/blob/06e16333adaaded940b8914ebc46d489e602cffd/main.cpp
 
 Description: Ce code permet de controler l'état d'une LED avec un bouton. L'état du bouton est lu en continue,  si le bouton est pressé ( état 1) la LED s'allume (état 1), si le bouton passe à l'état 0 la LED s'éteint (état 0).
 
    2. Utiliser une interruption.
 
-L'exercice avec l'interruption se trouve dans le commit "interruption" : https://github.com/L0uka973/projet_CATIE_capteur/blob/8f73846f4bf2cb6d933122575ab8f865d9f9ef60/main.cpp
+L'exercice avec l'interruption se trouve dans le commit "Exercice Interruption" : https://github.com/L0uka973/projet_CATIE_capteur/blob/1362bbc01f03b877a04ee7c510ee52cf1d0cb4b6/main.cpp
 
 Description : Le code utilise des interruptions pour synchroniser l’état d’un bouton avec une LED.
 
    3. Ajouter un timer
 
-L'exercice avec timer se trouve dans le commit "Timer" : https://github.com/L0uka973/projet_CATIE_capteur/blob/6733e83df5dda08faff43534e47ef319fc7d60bb/main.cpp
+L'exercice avec timer se trouve dans le commit "Exercice Timer" : https://github.com/L0uka973/projet_CATIE_capteur/blob/949c61aea82a69e3541a8188d51b0141051f4d47/main.cpp
 
 
 Description : Ce code utilise des interruptions pour mesurer le temps écoulé entre l'appui et le relâchement d'un bouton, tout en synchronisant l'état d'une LED avec l'état du bouton. Il affiche l'état du bouton et le temps écoulé dans la console série.
     
    4. Contrôle de la LED par un ticker
 
-L'exercice avec ticker se trouve dans le commit "Ticker" : https://github.com/L0uka973/projet_CATIE_capteur/blob/369bdf9e77eedfa843995a632f8d4b59d574f63a/main.cpp
+L'exercice avec ticker se trouve dans le commit "Exercice Ticker" : https://github.com/L0uka973/projet_CATIE_capteur/blob/0bbcbb3e9e07eb59e38400573aedeeb07156de2a/main.cpp
 
 Description : Le code fait clignoter la LED 'LED1' toutes les 2 secondes en inversant son état à chaque intervalle.
       
    5. Piloter la fréquence de clignotement
 
-L'exercice avec le côntrole de la fréquence se trouve dans le commit "  TP FREQUENCE : Utilisation d'une variable globale qui est modifiée afin de modifier la fréquence de clignotemment de la LED" : https://github.com/L0uka973/projet_CATIE_capteur/blob/e022e2a7069a0f2eb22725b9378da28fadb15ca5/main.cpp
+L'exercice avec le côntrole de la fréquence se trouve dans le commit "Exercice changement fréquence" : https://github.com/L0uka973/projet_CATIE_capteur/blob/c9d6f10fc5e7ba52e346195619a03a0889daaa41/main.cpp
 
 Pour réaliser cette exercice, nous avons utilisé une variable globale qui va décrémenter si on appuie sur le bouton. 
 
