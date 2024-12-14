@@ -52,17 +52,26 @@ Pour les diffférents exercices il faut copier le contenue du main.cpp correspon
      
 L'exercice du Polling avec le bouton se trouve dans le commit "Pooling du bouton" : https://github.com/L0uka973/projet_CATIE_capteur/blob/fba7df308ef7c4425ebff8b5c5e005ae7dd080c4/main.cpp
 
+Description: Ce code permet de controler l'état d'une LED avec un bouton. L'état du bouton est lu en continue,  si le bouton est pressé ( état 1) la LED s'allume (état 1), si le bouton passe à l'état 0 la LED s'éteint (état 0).
+
    2. Utiliser une interruption.
 
 L'exercice avec l'interruption se trouve dans le commit "interruption" : https://github.com/L0uka973/projet_CATIE_capteur/blob/8f73846f4bf2cb6d933122575ab8f865d9f9ef60/main.cpp
 
+Description : Le code utilise des interruptions pour synchroniser l’état d’un bouton avec une LED.
+
    3. Ajouter un timer
 
 L'exercice avec timer se trouve dans le commit "Timer" : https://github.com/L0uka973/projet_CATIE_capteur/blob/6733e83df5dda08faff43534e47ef319fc7d60bb/main.cpp
+
+
+Description : Ce code utilise des interruptions pour mesurer le temps écoulé entre l'appui et le relâchement d'un bouton, tout en synchronisant l'état d'une LED avec l'état du bouton. Il affiche l'état du bouton et le temps écoulé dans la console série.
     
    4. Contrôle de la LED par un ticker
 
 L'exercice avec ticker se trouve dans le commit "Ticker" : https://github.com/L0uka973/projet_CATIE_capteur/blob/369bdf9e77eedfa843995a632f8d4b59d574f63a/main.cpp
+
+Description : Le code fait clignoter la LED 'LED1' toutes les 2 secondes en inversant son état à chaque intervalle.
       
    5. Piloter la fréquence de clignotement
 
@@ -70,15 +79,19 @@ L'exercice avec le côntrole de la fréquence se trouve dans le commit "  TP FRE
 
 Pour réaliser cette exercice, nous avons utilisé une variable globale qui va décrémenter si on appuie sur le bouton. 
 
+Description : Le code utilise un bouton pour ajuster la fréquence du clignotement d'une LED, en diminuant cette fréquence à chaque pression du bouton. La LED est contrôlée par un Ticker, qui inverse son état à intervalles réguliers basés sur la fréquence actuelle. La fréquence est affichée périodiquement dans la console.
+
    6. Thread
 
 L'exercice Thread se trouve dans le commit "TP thread" : https://github.com/L0uka973/projet_CATIE_capteur/blob/b7a105368b8a6cfcbf0db97cad3d91482a6fdb49/main.cpp
-Pour cet exercice, deux threads ping et pong sont crées pour être s'éxécuter en parallèle. De plus, en tâche de fond une LED clignotte toutes les secondes.
+
+Description : Pour cet exercice, deux threads ping et pong sont crées pour être s'éxécuter en parallèle. De plus, en tâche de fond une LED clignotte toutes les secondes.Les deux threads, ping et pong,  affichent respectivement "ping" et "pong" 100 fois sur la console série. On a pu constater un problème , les messages se mélangent . Les deux threads s'exécutent de manière concurrente et non synchronisée donc ils peuvent accéder à la console série en même temps, ce qui entraîne ce mélange des messages.
 
    7. Mutex
 
 L'exercice Mutex se trouve dans le commit "TP mutex" : https://github.com/L0uka973/projet_CATIE_capteur/blob/1c440253c51e7e798cc0412a40d09223c30109de/main.cpp
-Cette fois ci, un mutex est utilisé pour synchroniser l'accès au terminal (printf). Ainsi, on évite que les deux messages des threads s'entrelacent. 
+
+Description :Cette fois ci, un mutex est utilisé pour synchroniser l'accès au terminal (printf). Ainsi, on évite que les deux messages des threads s'entrelacent. 
 
 # Projet
 ## Communication avec le capteur
@@ -121,7 +134,3 @@ This project contains code from other projects. The original license text is inc
 send_message
 
 
-comment installer le depot git, commande et comment le deployer 
-expliquer les exos 
-explication le projet
-différences, processus 
